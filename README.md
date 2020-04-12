@@ -45,19 +45,20 @@ El objetivo del siguiente tutorial es crear un proyecto para subir imágenes. Lo
   ```ruby
   <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
   ```
+
   incluya
 
   ```ruby
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    ```
+  ```
 
-    y reemplace
-    ```ruby
-    <%= yield %>
-    ```
-
-    por
+  y reemplace
+  ```ruby
+  <%= yield %>
+  ```
+  por
 
   ```ruby
   <div class="container">
@@ -157,11 +158,12 @@ El objetivo del siguiente tutorial es crear un proyecto para subir imágenes. Lo
 
 
 13. Abre `app/views/ideas/show.html.erb` y cambie
-```ruby
-<%= @idea.picture %>
-```
+  ```ruby
+  <%= @idea.picture %>
+  ```
 
   a
+
   ```ruby
   <%= image_tag(@idea.picture_url, :width => 600) if @idea.picture.present? %>
   ```
@@ -181,22 +183,20 @@ El objetivo del siguiente tutorial es crear un proyecto para subir imágenes. Lo
   ```
 
 
-15. Posterior a visualizar su aplicacion, abrir el archivo `app/views/ideas/index.html.erb`
+15. Posterior a visualizar su aplicacion, abrir el archivo `app/views/ideas/index.html.erb` y reemplazar el codigo de la tabla por:
 
-  y reemplazar el codigo de la tabla por:
+  ```ruby
+  <h3>Lista ideas</h3>
 
-    ```ruby
-    <h3>Lista ideas</h3>
-
-    <% @ideas.in_groups_of(3) do |group| %>
-      <div class="row">
-        <% group.compact.each do |idea| %>
-          <div class="col-md-4">
-            <%= image_tag idea.picture_url, width: '100%' if idea.picture.present?%>
-            <h4><%= link_to idea.name, idea %></h4>
-            <%= idea.description %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-    ```
+  <% @ideas.in_groups_of(3) do |group| %>
+    <div class="row">
+      <% group.compact.each do |idea| %>
+        <div class="col-md-4">
+          <%= image_tag idea.picture_url, width: '100%' if idea.picture.present?%>
+          <h4><%= link_to idea.name, idea %></h4>
+          <%= idea.description %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  ```
