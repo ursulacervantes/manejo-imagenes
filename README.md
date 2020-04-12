@@ -10,13 +10,13 @@ El objetivo del siguiente tutorial es crear un proyecto para subir imágenes. Lo
 
 2. Crear un scaffold
 
-    *Scaffold* se refiere a la generación automática de un conjunto simple de modelo, vista y controlador, normalmente para una sola tabla. Es una forma rápida de generar la mayor parte de piezas de una aplicación.
+  *Scaffold* se refiere a la generación automática de un conjunto simple de modelo, vista y controlador, normalmente para una sola tabla. Es una forma rápida de generar la mayor parte de piezas de una aplicación.
 
-    Vamos a crear un modelo simple con los siguientes atributos:
+  Vamos a crear un modelo simple con los siguientes atributos:
 
-    * name (string)
-    * description (text)
-    * picture (string) — Este campo va a contener una imagen (el nombre del archivo, para ser más precisos)
+  * name (string)
+  * description (text)
+  * picture (string) — Este campo va a contener una imagen (el nombre del archivo, para ser más precisos)
 
   ```ruby
   @ rails generate scaffold idea name:string description:text picture:string
@@ -129,7 +129,19 @@ El objetivo del siguiente tutorial es crear un proyecto para subir imágenes. Lo
   @ rails generate uploader Picture
   ```
 
-  Si revisas el folder `app/uploaders`, vas a encontrar un archivo llamado `picture_uploader.rb`. Nota que ek archivo tiene comentarios y ejemplos bastante útiles que te pueden ayudar a comenzar.
+  Si revisas el folder `app/uploaders`, vas a encontrar un archivo llamado `picture_uploader.rb`. Nota que el archivo tiene comentarios y ejemplos bastante útiles que te pueden ayudar a comenzar.
+
+  ```ruby
+  storage :file
+  ```
+
+  Por defecto, los archivos serán guardados en la carpeta `public/uploads`. Por lo tanto, será mejor excluir esta carpeta de nuestro sistema de versionamiento.
+
+  ##### .gitignore
+
+  `public/uploads`
+
+  También puedes modificar el método `store_dir` dentro del `uploader` para elegir otra carpeta.
 
 11. Ahora tenemos que incluir o `mount` el uploader en nuestro modelo.
 
@@ -200,3 +212,62 @@ El objetivo del siguiente tutorial es crear un proyecto para subir imágenes. Lo
     </div>
   <% end %>
   ```
+
+## Siguientes pasos
+
+### Generar Thumbnails
+
+Para cortar y escalar imágenes necesitamos otra herramienta. Carrierwave tiene soporte para las gemas `RMagick` y `MiniMagick`. Estas herramientas nos ayudan a manipular imágenes con la ayuda de `ImageMagick`. Esta última es una solución que nos permite editar imágenes existentes y genera nuevas. Puedes elegir cualquiera de las dos gemas mencionadas. Recomiendo `MiniMagick` porque es más fácil de instalar y tiene mejor soporte.
+
+##### Gemfile
+
+```ruby
+gem 'mini_magick'
+```
+
+### Agregar validaciones
+
+Actualmente nuestro `uploading` funciona pero no estamos validando el formato. Esto, por su puesto, no es bueno. Para trabajar con imágenes debemos permitir los archivos con extención .png, .jpg y .gif
+
+##### uploaders/image_uploader.rb
+
+```ruby
+def extension_whitelist
+    %w(jpg jpeg gif png)
+end
+```
+
+También puedes agregar verificaciones de tipo de contenido con el método `content_type_whitelist`
+
+##### uploaders/image_uploader.rb
+
+```ruby
+def content_type_whitelist
+    /image\//
+end
+```
+
+Además, es posible tener un blacklist de tipos de archivos, por ejemplo ejecutables. Para esto se define el método `content_type_blacklist`
+
+Para agregar validaciones de tamaño de archivo vamos a requerir otra gema.
+
+##### Gemfile
+
+`gem 'file_validators'`
+
+
+### Trabajar con múltiples archivos
+
+En el caso que necesitesmos trabajar con varios archivos necesitamos agregar serialized field (para SQLite) o a JSON field (para Postgres o MySQL). Para esto se quita la gema `sqlite3` del archivo Gemfile y se agrga `pg`:
+
+##### Gemfile
+
+`gem 'pg'`
+
+### Usar Cloud Storage
+
+No siempre es posible guardar los archivos de forma local. Podemos usar Amazon S3, por ejemplo. Para esto, necesitamos agregar la gema `fog-aws` :
+
+##### Gemfile
+
+`gem "fog-aws"`
